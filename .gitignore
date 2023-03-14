@@ -1,0 +1,25 @@
+
+# Various files
+*.csv.gz
+*.parquet
+*.crc
+*_SUCCESS
+*.jar
+*.json
+*.txt
+*.yaml
+
+
+# Credentials folder
+creds/*
+notebooks/*
+
+# Terraform files
+*.terraform
+*.terraform*
+*terraform.tfstat*
+
+# Jupyter notebook files
+*.ipynb_checkpoints*
+
+__pycache__/
