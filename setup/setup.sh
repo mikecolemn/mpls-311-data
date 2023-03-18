@@ -5,6 +5,7 @@
 # initial updates
 sudo apt-get update -y
 sudo apt-get upgrade -y
+sudo apt-get install unzip -y
 
 # setup gcloud cli
 sudo apt-get install apt-transport-https ca-certificates gnupg -y
@@ -14,11 +15,17 @@ sudo apt-get update && sudo apt-get install google-cloud-cli
 
 # anaconda setup
 wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
-# User will need to page down past the MORE prompt
+# User will need to page down or hit f to get past the MORE prompt
 echo -ne "ENTER \n yes \n \n yes \n" | bash Anaconda3-2022.10-Linux-x86_64.sh
 rm Anaconda3-2022.10-Linux-x86_64.sh
 
 source .bashrc
+
+# terraform
+wget https://releases.hashicorp.com/terraform/1.4.2/terraform_1.4.2_linux_amd64.zip
+unzip terraform_1.4.2_linux_amd64.zip -d /usr/bin
+rm terraform_1.4.2_linux_amd64.zip
+
 
 # Pull repo
 git clone https://github.com/mikecolemn/mpls-311-data.git
