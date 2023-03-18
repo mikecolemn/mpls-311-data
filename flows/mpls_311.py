@@ -144,15 +144,11 @@ def parent_process_data(years: list[int] = [2023]):
     for year in years:
         process_data(year)
 
-    stage_bq()
-
-
+    
 if __name__ == '__main__':
 
-    years = [2015, 2016]
-    # years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+    years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
 
     parent_process_data(years)
 
-
-
+    stage_bq()

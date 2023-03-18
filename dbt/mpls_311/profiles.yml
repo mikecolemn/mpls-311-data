@@ -1,0 +1,11 @@
+
+mpls_311:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: mpls-311
+      dataset: mpls_311_development
+      threads: 1
+      keyfile: /home/udengine/git/mpls-311-data/creds/mpls-311-a8623ad55a5a.json

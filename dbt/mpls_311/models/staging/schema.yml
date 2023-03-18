@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: staging
+    database: mpls-311
+    schema: mpls_311_staging
+
+    tables:
+      - name: mpls_311data_partitioned
