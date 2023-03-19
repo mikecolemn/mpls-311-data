@@ -5,7 +5,10 @@
 {{ config(materialized='table') }}
 
 select
-    row_number() OVER(ORDER BY subject_name, reason_name, std_type_name, std_title) as category_id,
+    {{ dbt_utils.generate_surrogate_key(['subject_name', 
+                                        'reason_name', 
+                                        'type_name',
+                                        'title']) }} as category_id,
     subject_name,
     reason_name,
     std_type_name as type_name,

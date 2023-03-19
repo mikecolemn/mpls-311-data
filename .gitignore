@@ -26,3 +26,5 @@ __pycache__/
 
 /dbt/logs/dbt.log
 */dbt/*/.user.yml
+
+/dbt/*/.piperider

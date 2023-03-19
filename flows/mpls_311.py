@@ -104,7 +104,7 @@ def pq_to_gcs(path: Path) -> None:
 
 @task(name="Stage GCS to BQ")
 def stage_bq():
-    """Create external BQ table"""
+    """Stage data in BigQuery"""
 
     # gcp_credentials_block = GcpCredentials.load("mpls311-gcp-creds")
 
