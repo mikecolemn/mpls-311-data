@@ -8,6 +8,7 @@ from pathlib import Path
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp.bigquery import GcpCredentials, BigQueryWarehouse
+from prefect_dbt.cli.commands import DbtCoreOperation
 
 
 @task(name="Get API data", retries=3, log_prints=True)
@@ -127,6 +128,21 @@ def stage_bq():
         """
         warehouse.execute(operation)
 
+@task(name="dbt modelling")
+def dbt_model():
+    """Run dbt models"""
+
+    dbt_path = Path(f"dbt/mpls_311")
+
+    dbt_run = DbtCoreOperation(
+                    commands=["dbt deps", "dbt seed", "dbt run -t prod"],
+                    project_dir=dbt_path,
+                    profiles_dir=dbt_path,
+    )
+
+    dbt_run.run()
+
+    return
 
 @flow(name="Process-Data-Subflow")
 def process_data(year: int):
@@ -152,3 +168,4 @@ if __name__ == '__main__':
     parent_process_data(years)
 
     stage_bq()
+    dbt_model()
