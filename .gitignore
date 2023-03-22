@@ -6,12 +6,12 @@
 *_SUCCESS
 *.jar
 *.json
-*.txt
+# *.txt
 *.yaml
 
 
 # Credentials folder
-creds/*
+creds/*.json
 notebooks/*
 
 # Terraform files
