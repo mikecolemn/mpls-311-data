@@ -7,6 +7,7 @@ pyarrow==10.0.1
 pandas-gbq==0.18.1
 psycopg2-binary==2.9.5
 sqlalchemy==1.4.46
-dbt-bigquery==1.4.3
-prefect-dbt[cli]==
-prefect-dbt[bigquery]==
+dbt-bigquery==1.4.2
+prefect-dbt[cli]==0.3.1
+prefect-dbt[bigquery]==0.3.1
+python-dotenv==1.0.0

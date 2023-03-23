@@ -5,14 +5,16 @@ mpls_311:
     dev:
       type: bigquery
       method: service-account
-      project: mpls-311
+      # project: mpls-311
       dataset: mpls_311_development
       threads: 4
-      keyfile: /home/udengine/git/mpls-311-data/creds/mpls-311-a8623ad55a5a.json
+      # keyfile: /home/udengine/git/mpls-311-data/creds/mpls-311-a8623ad55a5a.json
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}"
     prod:
       type: bigquery
       method: service-account
-      project: mpls-311
+      # project: mpls-311
       dataset: mpls_311_production
       threads: 4
-      keyfile: /home/udengine/git/mpls-311-data/creds/mpls-311-a8623ad55a5a.json
+      # keyfile: /home/udengine/git/mpls-311-data/creds/mpls-311-a8623ad55a5a.json
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}"

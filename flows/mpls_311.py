@@ -9,7 +9,13 @@ from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp.bigquery import GcpCredentials, BigQueryWarehouse
 from prefect_dbt.cli.commands import DbtCoreOperation
+from dotenv import load_dotenv
 
+load_dotenv()
+
+with open(os.environ['GOOGLE_APPLICATION_CREDENTIALS'], 'r') as creds:
+    json_creds = json.load(creds)
+    gcp_project_name = json_creds['project_id']
 
 @task(name="Get API data", retries=3, log_prints=True)
 def get_data_api(year: str) -> pd.DataFrame:
@@ -107,25 +113,27 @@ def pq_to_gcs(path: Path) -> None:
 def stage_bq():
     """Stage data in BigQuery"""
 
-    # gcp_credentials_block = GcpCredentials.load("mpls311-gcp-creds")
-
-    with BigQueryWarehouse.load("mpls311-bq") as warehouse:
-        operation = """
-            CREATE OR REPLACE EXTERNAL TABLE `mpls-311.mpls_311_staging.external_mpls_311data`
+    bq_ext_tbl = f"""
+            CREATE OR REPLACE EXTERNAL TABLE `{gcp_project_name}.mpls_311_staging.external_mpls_311data`
             OPTIONS (
                 format = 'PARQUET',
-                uris = ['gs://data_lake_mpls-311/data/pq/mpls_311data_*.parquet']
+                uris = ['gs://data_lake_{gcp_project_name}/data/pq/mpls_311data_*.parquet']
             )
         """
-        warehouse.execute(operation)
 
     with BigQueryWarehouse.load("mpls311-bq") as warehouse:
-        operation = """
-            CREATE OR REPLACE TABLE `mpls-311.mpls_311_staging.mpls_311data_partitioned`
+        operation = bq_ext_tbl
+        warehouse.execute(operation)
+
+    bq_part_tbl = f"""
+            CREATE OR REPLACE TABLE `{gcp_project_name}.mpls_311_staging.mpls_311data_partitioned`
             PARTITION BY
                 DATE_TRUNC(open_datetime,YEAR) AS
-            SELECT * FROM `mpls-311.mpls_311_staging.external_mpls_311data`
+            SELECT * FROM `{gcp_project_name}.mpls_311_staging.external_mpls_311data`
         """
+
+    with BigQueryWarehouse.load("mpls311-bq") as warehouse:
+        operation = bq_part_tbl
         warehouse.execute(operation)
 
 @task(name="dbt modelling")
@@ -135,7 +143,7 @@ def dbt_model():
     dbt_path = Path(f"dbt/mpls_311")
 
     dbt_run = DbtCoreOperation(
-                    commands=["dbt deps", "dbt seed", "dbt run -t prod"],
+                    commands=["dbt deps", "dbt seed -t prod", "dbt run -t prod"],
                     project_dir=dbt_path,
                     profiles_dir=dbt_path,
     )
@@ -154,18 +162,20 @@ def process_data(year: int):
     pq_to_gcs(pq_path)
 
 @flow(name="Process-Data-Parent")
-def parent_process_data(years: list[int] = [2023]):
+def parent_process_data(years: list[int]):
     """Parent process to loop through provided years Mpls 311 data"""
 
     for year in years:
         process_data(year)
 
-    
+    stage_bq()
+    dbt_model()
+
 if __name__ == '__main__':
 
-    years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+    years = [2023]
+    # years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
 
     parent_process_data(years)
 
-    stage_bq()
-    dbt_model()
+    

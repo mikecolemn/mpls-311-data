@@ -25,8 +25,8 @@ variable "BQ_DATASET" {
   default = ["mpls_311_staging", "mpls_311_development", "mpls_311_production"]
 }
 
-variable "credentials" {
-    description = "GCP service account credential file location"
-    default = "../creds/mpls-311-a8623ad55a5a.json"
-    type = string
-}
+# variable "credentials" {
+#     description = "GCP service account credential file location"
+#     default = "../credsXXXXX/mpls-311-a8623ad55a5a.json"
+#     type = string
+# }
