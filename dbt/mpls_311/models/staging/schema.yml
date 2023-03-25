@@ -2,8 +2,78 @@ version: 2
 
 sources:
   - name: staging
-    # database: mpls-311
+    description: A staged copy 
     schema: mpls_311_staging
 
     tables:
       - name: mpls_311data_partitioned
+
+models:
+  - name: stg_mpls_311data
+    description: >
+      311 Service Requests for various departments.
+    columns:
+      - name: case_id
+        description: Gives a unique identifying number associated with each case.
+        tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null
+
+      - name: object_id
+        description: A unique identifying number within the original source data set.
+
+      - name: subject_name
+        description: > 
+          This is the top level hierarchy definition of a service request. It is most closely associated with 
+          a department designation. 
+
+      - name: reason_name
+        description: >
+          This is the 2nd level classification of a service request and reflects a program name or a division 
+          assigned to perform the service request.
+
+      - name: type_name
+        description: >
+          This is the 3rd level classification describing what the service request specifically is for. It is the 
+          most common designation description used in the city. 
+
+      - name: title
+        description: Similar to the Type column, this describes more details about the incident. 
+
+      - name: open_datetime
+        description: >
+          This is the date and time stamp when the department, program, or division assigned to complete the task 
+          in a service request starts working that service request. 
+
+      - name: closed_datetime
+        description:  The date a resolving department, division or program completed the service request. 
+
+      - name: last_update_datetime
+        description: The last time this Service request has been updated
+
+      - name: case_status
+        description: >
+          If case status = "0", it means the case is closed. If case status = "1", the case is still considered open. 
+          All cases with a case status of "1" should not have a closed date.
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              quote: false
+
+      - name: coord_x
+        description: >
+          This is the coordinate the city provides of where the service request occurred in the WGS 84 web Mercator 
+          auxilliary sphere coordinate system.
+
+      - name: coord_y
+        description: >
+          This is the coordinate the city provides of where the service request occurred in the WGS 84 web Mercator 
+          auxilliary sphere coordinate system.
+
+      - name: geometry_x
+        description: Additional geometry data point related to the Service Request
+
+      - name: geometry_y
+        description: Additional geometry data point related to the Service Request

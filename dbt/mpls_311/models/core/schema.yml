@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: dim_categories
+    description: >
+      List of unique categories, from manually prepared seed file.
+
+  - name: dim_dates
+    description: >
+      List of unique combinations of dates, along with the start to some metrics around the duration 
+      from open to closed datetime.
+
+  - name: dim_geography
+    description: >
+      List of unique combinations of geography data points.
+
+  - name: fact_311data
+    description: > 
+      Fact table storing service requests from the Minneapolis 311 system and department.
+      Each record is a service request that a department within the City of Minneapolis is assigned to support.
+
