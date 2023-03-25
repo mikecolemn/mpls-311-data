@@ -143,7 +143,7 @@ def dbt_model():
     dbt_path = Path(f"dbt/mpls_311")
 
     dbt_run = DbtCoreOperation(
-                    commands=["dbt deps", "dbt seed -t prod", "dbt run -t prod"],
+                    commands=["dbt deps", "dbt seed -t prod", "dbt test -t prod", "dbt run -t prod"],
                     project_dir=dbt_path,
                     profiles_dir=dbt_path,
     )
