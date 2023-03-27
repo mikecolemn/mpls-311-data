@@ -19,3 +19,8 @@ models:
       Fact table storing service requests from the Minneapolis 311 system and department.
       Each record is a service request that a department within the City of Minneapolis is assigned to support.
 
+  - name: rpt_categories_year
+    description: > 
+      Materialized table containing aggregated data on groupings of category fields, and 
+      Year and Month of open_datetime, for improved reporting performance.
+      
