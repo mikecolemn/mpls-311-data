@@ -64,16 +64,12 @@ In Google Cloud Console, navigate to Compute Engine > VM instances.  You may hav
 
 Click the `Create Instance` action towards the top.  On the next screen, you'll want to set the following information:
 
-Name = whatever name you would like to call this VM
-
-Region, Zone = select a region near you, same with Zone
-
-Machine Type = Standard, 4vCPu, 16 GB Memory (e2-standard-4)
-
-Boot Disk section, change the following settings:
-
-Select Ubuntu and Ubuntu 20.04 (x86/64) as the Operation System and Version
-Size = 20 GB should be plenty for this project.
+    * Name = whatever name you would like to call this VM
+    * Region, Zone = select a region near you, same with Zone
+    * Machine Type = Standard, 4vCPu, 16 GB Memory (e2-standard-4)
+    * Boot Disk section, change the following settings:
+        * Select Ubuntu and Ubuntu 20.04 LTS (x86/64) as the Operating System and Version
+        * Size = 20 GB should be plenty for this project.
 
 Hit Create.  Once the VM is finished getting created, note the external IP address.
 
