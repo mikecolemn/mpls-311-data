@@ -4,9 +4,8 @@ sources:
   - name: staging
     description: A staged copy 
     schema: mpls_311_staging
-
     tables:
-      - name: mpls_311data_partitioned
+      - name: mpls_311data_partitioned_clustered
 
 models:
   - name: stg_mpls_311data

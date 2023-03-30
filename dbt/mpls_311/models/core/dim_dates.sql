@@ -2,7 +2,13 @@
     Creates a dimension table for dates and some calculations of the dates
 */
 
-{{ config(materialized='table') }}
+{{ config(materialized='table',
+          partition_by={
+            "field": "open_datetime",
+            "data_type": "timestamp",
+            "granularity": "year"
+          }
+          ) }}
 
 select
     {{ dbt_utils.generate_surrogate_key(['open_datetime', 'closed_datetime', 'last_update_datetime']) }} as date_id,

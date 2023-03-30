@@ -126,10 +126,10 @@ def stage_bq():
         warehouse.execute(operation)
 
     bq_part_tbl = f"""
-            CREATE OR REPLACE TABLE `{gcp_project_name}.mpls_311_staging.mpls_311data_partitioned`
-            PARTITION BY
-                DATE_TRUNC(open_datetime,YEAR) AS
-            SELECT * FROM `{gcp_project_name}.mpls_311_staging.external_mpls_311data`
+            CREATE OR REPLACE TABLE `mpls-311.mpls_311_staging.mpls_311data_partitioned_clustered`
+            PARTITION BY DATE_TRUNC(open_datetime,YEAR)
+            CLUSTER BY subject_name, type_name AS
+            SELECT * FROM `mpls-311.mpls_311_staging.external_mpls_311data`;
         """
 
     with BigQueryWarehouse.load("mpls311-bq") as warehouse:

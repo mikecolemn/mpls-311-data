@@ -7,6 +7,6 @@ select
     case_id,
     case_status,
     cast(closed_datetime as timestamp) as closed_datetime
-from {{ source('staging','mpls_311data_partitioned') }}
+from {{ ref('stg_mpls_311data') }}
 where (case_status = 0 and closed_datetime is null)
   or (case_status = 1 and closed_datetime is not null)

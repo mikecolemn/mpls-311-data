@@ -4,7 +4,7 @@
 -- Return distinct list of newly seen categorization fields
 select distinct 
     s.subject_name, s.reason_name, s.type_name, s.title
-from {{ source('staging','mpls_311data_partitioned') }} s
+from {{ ref('stg_mpls_311data') }} s
 left join {{ ref('mpls_311_categories') }} c
 on s.subject_name = c.subject_name
 and s.reason_name = c.reason_name

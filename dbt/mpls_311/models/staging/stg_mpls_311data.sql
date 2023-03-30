@@ -29,4 +29,4 @@ select
     geometry_x,
     geometry_y
 
-from {{ source('staging','mpls_311data_partitioned') }}
+from {{ source('staging','mpls_311data_partitioned_clustered') }}

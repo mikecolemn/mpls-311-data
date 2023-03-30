@@ -6,5 +6,5 @@ select
     case_id,
     cast(open_datetime as timestamp) as open_datetime,
     cast(closed_datetime as timestamp) as closed_datetime
-from {{ source('staging','mpls_311data_partitioned') }}
+from {{ ref('stg_mpls_311data') }}
 where cast(open_datetime as timestamp) > cast(closed_datetime as timestamp) 
