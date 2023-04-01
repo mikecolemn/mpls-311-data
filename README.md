@@ -34,8 +34,8 @@ This project utilizes the following technologies and tools:
     * Google Compute Engine, if you use a VM on Google's Cloud Platform
 * Terraform as Infrastructure as Code, to deploy Buckets and Datasets on Google Cloud Platform
 * Python script acts as the data pipeline, from initial retrieveal of the data staging it in BigQuery, and to running the dbt models
-* Prefect as the orchestration tool
-* dbt for some data quality testing, data modelling and transformation, and promotion of data to Production BigQuery dataset
+* Prefect as the orchestration tool.  A local instance of the Prefect Orion server is used, to make it easy for peer reviews.
+* dbt for some data quality testing, data modelling and transformation, and promotion of data to Production BigQuery dataset.  A local instance of dbt core is used to make it easy for peer reviews.
 * Parquet columnar data files
 * Piperider during development to assist with reviewing dbt model changes
 
@@ -76,13 +76,13 @@ Reproducing this project has been tested on an Ubuntu 20.04 LTS VM, in both Goog
 
 2) On your VM, clone the repo, `git clone https://github.com/mikecolemn/mpls-311-data.git`, and then `cd` into the repo folder
 
-3) If you need to install the Google Cloud CLI, Anaconda, and Terraform, you can run bash script, `bash ./setup/setup.sh`, which will perform the following actions:
+3) If you need to install Google Cloud CLI, Anaconda, and Terraform, you can run a bash script with this command, `bash ./setup/setup.sh`, which will perform the following actions:
 
     * Apply initial updates, and install
     * Install Google Cloud cli application
     * Setup Anaconda and Terraform.
 
-    * (Note) This may take a little time to process and if you see any prompts from updates, you can hit <OK> on any prompts and `f` for the MORE prompt for the Anaconda setup
+    * (Note) This may take a little time to process and if you see any prompts from updates, you can hit OK on the prompts and `f` for the MORE prompt for the Anaconda setup
 
 4) Setup your conda virtual environment with the following commands:
 
@@ -99,19 +99,19 @@ Reproducing this project has been tested on an Ubuntu 20.04 LTS VM, in both Goog
 
 8) Run `gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS` to authenticate with Google Cloud, with your service account .json file.
 
-9) Run terraform to deploy your infrastructure to your Google Cloud Project.  Run the following commands:
+9) Run Terraform to deploy your infrastructure to your Google Cloud Project.  Run the following commands:
 
     * `terraform -chdir="./terraform" init` - to initialize terraform
     * `terraform -chdir="./terraform" plan -var="project=<project id here>"`, replacing <project id here> with your Google Project ID.  This will build a deployment plan that you can review.
     * `terraform -chdir="./terraform" apply -var="project=<project id here>"`, replacing <project id here> with your Google Project ID.  This will apply the deployment plan and deploy the infrastructure
 
-10) Run the following commands to set up a local prefect profile
+10) Run the following commands to set up a local Prefect profile
 
     * `prefect profile create mpls311`
     * `prefect profile use mpls311`
     * `prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api`
 
-11) Open two new terminal windows and ssh into your VM.  These additional terminals are going to be for launching the prefect orion server, and to launch a work queue, which will process deployed pipelines
+11) Open two new terminal windows and ssh into your VM.  These additional terminals are going to be for launching the Prefect orion server, and to launch a work queue, which will process deployed pipelines
 
     * Additional window 1:
         * `conda activate mpls311`
@@ -121,9 +121,9 @@ Reproducing this project has been tested on an Ubuntu 20.04 LTS VM, in both Goog
         * `conda activate mpls311`
         * `prefect agent start --work-queue "default"`
 
-12) From your original terminal session, Run this command to setup some blocks for your GCP credentials in prefect: `python ./setup/prefect_setup_blocks.py`
+12) From your original terminal session, run this command to setup some blocks for your GCP credentials in prefect: `python ./setup/prefect_setup_blocks.py`
 
-13) From your original terminal session, run the following three commands to deploy the pipeline to prefect and then run it for all years of data
+13) From your original terminal session, run the following three commands to deploy the pipeline to Prefect and then run it for all years of data
 
     * `prefect deployment build flows/mpls_311.py:parent_process_data -n "Mpls-311-ETL"`
     * `prefect deployment apply parent_process_data-deployment.yaml`
@@ -147,15 +147,13 @@ The link below is available for anyone to try out.  You can filter the report ba
 
 https://lookerstudio.google.com/s/iIP-OfIawPI
 
-As I look through the reports, there are a number of things that jump a lot that jumps out at me:
+As I look through the reports, there are a number of things that jump out at me:
 
 1) There are a small number of major categories of service requests, 13 of them.  Below those categories though, there are 177 different minor categories of requests they coordinate.
 
 1) Over the years, the major category with the most service requests is Vehicles and Commuting.  That category also has the top two minor categories for Parking Violations and Abandoned Vehicles.  I'm surprised there are so many requests related to abandoned vehicles.
 
 2) Some variations in certain categories throughout the year make sense.  For example, service requests related to Sidewalk Snow or Ice issues or Street Snow and Ice issues are typically November through April, given the winter here.  Similarly, service requests for exterior nuisance complaints are highest from May thorugh September, when people here are outside more and no longer hibernating.  There's also a very noticable spike related to Pothole and Sewer Issue service requests in March specifically, likely related to Winter ending.
-
-
 
 
 ## Future development
