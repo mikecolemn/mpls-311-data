@@ -18,7 +18,9 @@ models:
           - unique:
               config:
                 severity: warn
-          - not_null
+          - not_null:
+              config:
+                severity: warn
 
       - name: object_id
         description: A unique identifying number within the original source data set.
