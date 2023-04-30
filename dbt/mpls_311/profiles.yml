@@ -7,10 +7,10 @@ mpls_311:
       method: service-account
       dataset: mpls_311_development
       threads: 4
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}"
+      # keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}"
     prod:
       type: bigquery
       method: service-account
       dataset: mpls_311_production
       threads: 4
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}"
+      # keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}"

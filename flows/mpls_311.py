@@ -7,8 +7,8 @@ import os
 from pathlib import Path
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
-from prefect_gcp.bigquery import GcpCredentials, BigQueryWarehouse
-from prefect_dbt.cli.commands import DbtCoreOperation
+from prefect_gcp.bigquery import BigQueryWarehouse
+from prefect_dbt.cli.commands import DbtCliProfile, DbtCoreOperation
 #from dotenv import load_dotenv
 
 #load_dotenv()
@@ -143,17 +143,18 @@ def stage_bq(bucket):
 def dbt_model():
     """Run dbt models"""
 
-    #dbt_cli_profile = DbtCliProfile.load("dbt-cli-profile-dev")
+    dbt_cli_profile = DbtCliProfile.load("dbt-cli-profile-dev")
 
     dbt_path = Path(f"dbt/mpls_311")
 
     dbt_run = DbtCoreOperation(
-                    commands=["dbt deps", 
-                              "dbt seed", 
-                              "dbt build"],
-                    project_dir=dbt_path,
-                    profiles_dir=dbt_path,
-                    #dbt_cli_profile=dbt_cli_profile,
+                commands=["dbt deps", 
+                            "dbt seed", 
+                            "dbt build"],
+                project_dir=dbt_path,
+                #profiles_dir=dbt_path,
+                dbt_cli_profile=dbt_cli_profile,
+                overwrite_profiles=True
     )
 
     dbt_run.run()
