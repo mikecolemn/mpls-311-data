@@ -8,7 +8,7 @@ from pathlib import Path
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp.bigquery import GcpCredentials, BigQueryWarehouse
-#from prefect_dbt.cli.commands import DbtCliProfile, DbtCoreOperation
+from prefect_dbt.cli.commands import DbtCoreOperation
 #from dotenv import load_dotenv
 
 #load_dotenv()
