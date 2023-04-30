@@ -8,14 +8,18 @@ from pathlib import Path
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp.bigquery import GcpCredentials, BigQueryWarehouse
-from prefect_dbt.cli.commands import DbtCoreOperation
-from dotenv import load_dotenv
+#from prefect_dbt.cli.commands import DbtCliProfile, DbtCoreOperation
+#from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 
-with open(os.environ['GOOGLE_APPLICATION_CREDENTIALS'], 'r') as creds:
-    json_creds = json.load(creds)
-    gcp_project_name = json_creds['project_id']
+#with open(os.environ['GOOGLE_APPLICATION_CREDENTIALS'], 'r') as creds:
+#    json_creds = json.load(creds)
+#    gcp_project_name = json_creds['project_id']
+    
+gcs_block = GcsBucket.load("mpls311-gcs")
+bucket = gcs_block.bucket
+
 
 @task(name="Get API data", retries=3, log_prints=True)
 def get_data_api(year: str) -> pd.DataFrame:
@@ -102,22 +106,21 @@ def write_to_pq(df: pd.DataFrame, year: str) -> Path:
     return pq_path
 
 @task(name="Upload parquet file")
-def pq_to_gcs(path: Path) -> None:
+def pq_to_gcs(path: Path, gcs_block: GcsBucket) -> None:
     """Upload local parquet file to GCS"""
 
-    gcs_block = GcsBucket.load("mpls311-gcs")
     gcs_block.upload_from_path(from_path=f"{path}",to_path=path)
     return
 
 @task(name="Stage GCS to BQ")
-def stage_bq():
+def stage_bq(bucket):
     """Stage data in BigQuery"""
 
     bq_ext_tbl = f"""
-            CREATE OR REPLACE EXTERNAL TABLE `{gcp_project_name}.mpls_311_staging.external_mpls_311data`
+            CREATE OR REPLACE EXTERNAL TABLE `mpls_311_staging.external_mpls_311data`
             OPTIONS (
                 format = 'PARQUET',
-                uris = ['gs://data_lake_{gcp_project_name}/data/pq/mpls_311data_*.parquet']
+                uris = ['gs://{bucket}/data/pq/mpls_311data_*.parquet']
             )
         """
 
@@ -126,10 +129,10 @@ def stage_bq():
         warehouse.execute(operation)
 
     bq_part_tbl = f"""
-            CREATE OR REPLACE TABLE `{gcp_project_name}.mpls_311_staging.mpls_311data_partitioned_clustered`
+            CREATE OR REPLACE TABLE `mpls_311_staging.mpls_311data_partitioned_clustered`
             PARTITION BY DATE_TRUNC(open_datetime,YEAR)
             CLUSTER BY subject_name, type_name AS
-            SELECT * FROM `{gcp_project_name}.mpls_311_staging.external_mpls_311data`;
+            SELECT * FROM `mpls_311_staging.external_mpls_311data`;
         """
 
     with BigQueryWarehouse.load("mpls311-bq") as warehouse:
@@ -140,14 +143,17 @@ def stage_bq():
 def dbt_model():
     """Run dbt models"""
 
+    #dbt_cli_profile = DbtCliProfile.load("dbt-cli-profile-dev")
+
     dbt_path = Path(f"dbt/mpls_311")
 
     dbt_run = DbtCoreOperation(
                     commands=["dbt deps", 
-                              "dbt seed -t prod", 
-                              "dbt build -t prod"],
+                              "dbt seed", 
+                              "dbt build"],
                     project_dir=dbt_path,
                     profiles_dir=dbt_path,
+                    #dbt_cli_profile=dbt_cli_profile,
     )
 
     dbt_run.run()
@@ -161,7 +167,7 @@ def process_data(year: int):
     data = get_data_api(year)
     df = format_df(data)
     pq_path = write_to_pq(df, year)
-    pq_to_gcs(pq_path)
+    pq_to_gcs(pq_path, gcs_block)
 
 @flow(name="Process-Data-Parent")
 def parent_process_data(years: list[int]):
@@ -170,7 +176,7 @@ def parent_process_data(years: list[int]):
     for year in years:
         process_data(year)
 
-    stage_bq()
+    stage_bq(bucket)
     dbt_model()
 
 if __name__ == '__main__':
