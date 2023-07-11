@@ -7,7 +7,7 @@
 *.jar
 *.json
 # *.txt
-*.yaml
+# *.yaml
 
 
 # Credentials folder

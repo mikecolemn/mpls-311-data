@@ -4,22 +4,15 @@ import pandas as pd
 import math
 from pandas.io.json import json_normalize
 import os
+import yaml
 from pathlib import Path
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp.bigquery import BigQueryWarehouse
 from prefect_dbt.cli.commands import DbtCliProfile, DbtCoreOperation
-#from dotenv import load_dotenv
-
-#load_dotenv()
-
-#with open(os.environ['GOOGLE_APPLICATION_CREDENTIALS'], 'r') as creds:
-#    json_creds = json.load(creds)
-#    gcp_project_name = json_creds['project_id']
     
-gcs_block = GcsBucket.load("mpls311-gcs")
+gcs_block = GcsBucket.load("gcs-mpls311")
 bucket = gcs_block.bucket
-
 
 @task(name="Get API data", retries=3, log_prints=True)
 def get_data_api(year: str) -> pd.DataFrame:
@@ -57,38 +50,14 @@ def get_data_api(year: str) -> pd.DataFrame:
 def format_df(df: pd.DataFrame) -> pd.DataFrame:
     """Format DataFrame"""
 
-    df.rename(columns={'attributes.CASEID': 'case_id',
-                        'attributes.OBJECTID': 'object_id',
-                        'attributes.SUBJECTNAME': 'subject_name',
-                        'attributes.REASONNAME': 'reason_name',
-                        'attributes.TYPENAME': 'type_name',
-                        'attributes.TITLE': 'title',
-                        'attributes.OPENEDDATETIME': 'open_datetime',
-                        'attributes.CASESTATUS': 'case_status',
-                        'attributes.CLOSEDDATETIME': 'closed_datetime',
-                        'attributes.XCOORD': 'coord_x',
-                        'attributes.YCOORD': 'coord_y',
-                        'attributes.LastUpdateDate': 'last_update_datetime',
-                        'geometry.x': 'geometry_x',
-                        'geometry.y': 'geometry_y' 
-                        }, inplace=True)
+    with open('data/load_schema.yaml', 'rb') as f:
+        load_schema = yaml.safe_load(f)
+        
+    field_names = load_schema['field_names']
+    data_types = load_schema['data_types']
 
-    df = df.astype({
-                'case_id': 'Int64',
-                'object_id': 'Int64',
-                'subject_name': 'str',
-                'reason_name': 'str',
-                'type_name': 'str',
-                'title': 'str',
-                'open_datetime': 'datetime64[ms]',
-                'case_status': 'Int64',
-                'closed_datetime': 'datetime64[ms]',
-                'coord_x': 'float64',
-                'coord_y': 'float64',
-                'last_update_datetime': 'datetime64[ms]',
-                'geometry_x': 'float64',
-                'geometry_y': 'float64'
-                })
+    df.rename(columns=field_names, inplace=True)
+    df = df.astype(data_types)
 
     print(f"rows: {len(df)}")
 
@@ -124,7 +93,7 @@ def stage_bq(bucket):
             )
         """
 
-    with BigQueryWarehouse.load("mpls311-bq") as warehouse:
+    with BigQueryWarehouse.load("bq-mpls311") as warehouse:
         operation = bq_ext_tbl
         warehouse.execute(operation)
 
@@ -135,7 +104,7 @@ def stage_bq(bucket):
             SELECT * FROM `mpls_311_staging.external_mpls_311data`;
         """
 
-    with BigQueryWarehouse.load("mpls311-bq") as warehouse:
+    with BigQueryWarehouse.load("bq-mpls311") as warehouse:
         operation = bq_part_tbl
         warehouse.execute(operation)
 
@@ -152,7 +121,6 @@ def dbt_model():
                             "dbt seed", 
                             "dbt build"],
                 project_dir=dbt_path,
-                #profiles_dir=dbt_path,
                 dbt_cli_profile=dbt_cli_profile,
                 overwrite_profiles=True
     )
