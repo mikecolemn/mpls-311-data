@@ -1,0 +1,9 @@
+version: 2
+
+seeds: 
+  - name: mpls_311_categories
+    description: >
+      The Mpls 311 data categorization fields have some slight variations, depending on the source of the 
+      submission.  This seed file was manually prepared and standardizes the categorization fields, while
+      still tracking the source of the sumission.
+            

@@ -1,6 +1,6 @@
 from prefect.filesystems import GitHub
 from prefect.deployments import Deployment
-from mpls_311 import parent_process_data
+from etl_mpls311_gcp import parent_process_data
 
 storage = GitHub.load("gh-mpls311")
 
