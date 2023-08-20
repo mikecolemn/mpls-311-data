@@ -1,7 +1,7 @@
 pandas==1.5.2
-prefect==2.7.7
+prefect==2.11.3
 prefect-sqlalchemy==0.2.2
-prefect-gcp[cloud_storage]==0.2.4
+prefect-gcp==0.4.5
 protobuf==4.21.11
 pyarrow==10.0.1
 pandas-gbq==0.18.1

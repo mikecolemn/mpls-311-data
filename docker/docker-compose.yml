@@ -20,7 +20,7 @@ services:
       target: base
     container_name: orion
     restart: unless-stopped
-    entrypoint: [ "prefect", "orion", "start", "--host", "0.0.0.0", '--port', '4200' ]
+    entrypoint: [ "prefect", "server", "start", "--host", "0.0.0.0", '--port', '4200' ]
     ports:
       - 4200:4200
     environment:
@@ -42,9 +42,11 @@ services:
     restart: unless-stopped
     command:
       - prefect
-      - agent
+      - worker
       - start
-      - -q
+      - --pool
+      - default
+      - --work-queue
       - default
     depends_on:
       - orion
