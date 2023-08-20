@@ -1,0 +1,42 @@
+# Welcome to your prefect.yaml file! You can you this file for storing and managing
+# configuration for deploying your flows. We recommend committing this file to source
+# control along with your flow code.
+
+# Generic metadata about this project
+name: flows
+prefect-version: 2.11.3
+
+# build section allows you to manage and build docker images
+build: null
+
+# push section allows you to manage if and how this project is uploaded to remote locations
+push:
+- prefect_gcp.deployments.steps.push_to_gcs:
+    id: push_code
+    requires: prefect-gcp>=0.4.3
+    bucket: data_lake_mpls-311
+    folder: code/flows
+    credentials: "{{ prefect.blocks.gcp-credentials.gcp-mpls311 }}"
+
+pull:
+- prefect_gcp.deployments.steps.pull_from_gcs:
+    id: pull_code
+    requires: prefect-gcp
+    bucket: data_lake_mpls-311
+    folder: code/flows
+    credentials: "{{ prefect.blocks.gcp-credentials.gcp-mpls311 }}"
+
+# the deployments section allows you to provide configuration for deploying flows
+deployments:
+- name: Mpls311ETL
+  version: null
+  tags: []
+  description: null
+  schedule: {}
+  flow_name: null
+  entrypoint: flows/etl_mpls311_gcp.py:parent_process_data
+  parameters: {"years":[2023]}
+  work_pool:
+    name: default
+    work_queue_name: default
+    job_variables: {}
