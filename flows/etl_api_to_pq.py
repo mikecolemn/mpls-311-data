@@ -4,7 +4,7 @@ import pandas as pd
 import math
 from time import time, strftime, gmtime
 from datetime import date
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 import os
 import yaml
 from pathlib import Path
@@ -74,7 +74,7 @@ def query_api_records(year: int, batch_size: int, record_cnt: int, last_edit_dat
 def format_df(df: pd.DataFrame) -> pd.DataFrame:
     """Format DataFrame"""
 
-    with open('data/load_schema.yaml', 'rb') as f:
+    with open('load_schema.yaml', 'rb') as f:
         load_schema = yaml.safe_load(f)
         
     field_names = load_schema['field_names']

@@ -49,7 +49,8 @@ def pq_to_gcs(path: Path, gcs_block: GcsBucket) -> None:
 def stage_bq(bucket, year):
     """Stage data in BigQuery"""
 
-    gcp_credentials = GcpCredentials(project="mpls-311")
+    #gcp_credentials = GcpCredentials(project="mpls-311")
+    gcp_credentials = GcpCredentials.load("gcp-mpls311")
 
     job_config = {'write_disposition': 'WRITE_APPEND',
                   'source_format': 'PARQUET'}

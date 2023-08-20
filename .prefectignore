@@ -39,3 +39,15 @@ dask-worker-space/
 # VCS
 .git/
 .hg/
+
+# Mpls311 project
+creds/*
+data/*
+docker/*
+flows/testing/*
+images/*
+notebooks/*
+setup/*
+terraform/*
+.gitignore
+README.md

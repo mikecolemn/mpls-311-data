@@ -34,8 +34,6 @@ def process_data(year: int, last_edit_date: int, gcs_block, bq_block) -> None:
         pq_to_gcs(Path(track["pq_path"]), gcs_block)
         stage_bq(gcs_block.bucket, year)
 
-
-
         track_load_gcs(track, bq_block)        
 
     else:
