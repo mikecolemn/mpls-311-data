@@ -74,7 +74,7 @@ def query_api_records(year: int, batch_size: int, record_cnt: int, last_edit_dat
 def format_df(df: pd.DataFrame) -> pd.DataFrame:
     """Format DataFrame"""
 
-    with open('load_schema.yaml', 'rb') as f:
+    with open('flows/load_schema.yaml', 'rb') as f:
         load_schema = yaml.safe_load(f)
         
     field_names = load_schema['field_names']
