@@ -122,6 +122,10 @@ resource "google_bigquery_table" "track_load" {
 ]
 EOF
 
+  depends_on = [
+    google_bigquery_dataset.dataset
+  ]
+
 }
 
 resource "google_bigquery_table" "stg_mpls_311data" {
@@ -224,5 +228,9 @@ resource "google_bigquery_table" "stg_mpls_311data" {
 
 ]
 EOF
+
+  depends_on = [
+    google_bigquery_dataset.dataset
+  ]
 
 }
