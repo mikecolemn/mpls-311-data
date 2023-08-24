@@ -55,7 +55,7 @@ services:
       PREFECT_API_URL: http://host.docker.internal:4200/api
     volumes:
       #- "~/prefect/data/prefect_data:/opt/prefect/data"
-      - "~/git/mpls-311-data/flows:/opt/prefect/flows"
+      #- "~/git/mpls-311-data/flows:/opt/prefect/flows"
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - prefect-network
@@ -70,7 +70,7 @@ services:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=db
     volumes:
-      - "./data/prefect_pg_db:/var/lib/postgresql/data:rm"
+      - "~/docker/prefect_pg_db:/var/lib/postgresql/data:rm"
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "5433:5432"

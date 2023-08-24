@@ -46,7 +46,7 @@ def pq_to_gcs(path: Path, gcs_block: GcsBucket) -> None:
 
 
 @flow(name="Stage GCS to BQ")
-def stage_bq(bucket, year):
+def stage_bq(bucket, path):
     """Stage data in BigQuery"""
 
     #gcp_credentials = GcpCredentials(project="mpls-311")
@@ -58,7 +58,7 @@ def stage_bq(bucket, year):
     result = bigquery_load_cloud_storage(
                     dataset = "mpls_311_staging",
                     table = "raw_mpls_311data",
-                    uri = f"gs://{bucket}/data/pq/mpls_311data_{year}.parquet",
+                    uri = f"gs://{bucket}/{path}",
                     gcp_credentials = gcp_credentials,
                     job_config=job_config,
                     location=''
