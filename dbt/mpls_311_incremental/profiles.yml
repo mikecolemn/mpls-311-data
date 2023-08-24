@@ -7,10 +7,10 @@ mpls_311:
       method: service-account # Comment out for automated running
       dataset: mpls_311_development
       threads: 4
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}" # Comment out for automated running
+      #keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}" # Comment out for automated running
     prod:
       type: bigquery
       method: service-account # Comment out for automated running
       dataset: mpls_311_production
       threads: 4
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}" # Comment out for automated running
+      #keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS')}}" # Comment out for automated running
