@@ -14,7 +14,7 @@ push:
 - prefect_gcp.deployments.steps.push_to_gcs:
     id: push_code
     requires: prefect-gcp>=0.4.3
-    bucket: data_lake_mpls-311 # update this to your bucket, which will be named data_lake_[GCP Project name]
+    bucket: data_lake_[project name] # update this to your bucket, which will be named data_lake_[GCP Project name]
     folder: code/flows
     credentials: "{{ prefect.blocks.gcp-credentials.gcp-mpls311 }}"
 
