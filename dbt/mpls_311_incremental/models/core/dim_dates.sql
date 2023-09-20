@@ -2,13 +2,15 @@
     Creates a dimension table for dates and some calculations of the dates
 */
 
-{{ config(materialized='table',
+{{ config(materialized='incremental',
+          unique_key = 'case_id',
           partition_by={
             "field": "open_datetime",
             "data_type": "timestamp",
             "granularity": "year"
           }
           ) }}
+
 
 with dates as (
   select

@@ -2,7 +2,10 @@
     Creates a dimension table for categories
 */
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='incremental',
+    unique_key='category_id'
+    ) }}
 
 
 with stg_categories as (
