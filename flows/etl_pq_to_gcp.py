@@ -98,7 +98,7 @@ def track_load_gcs(track: dict, bq_block):
     
 
     track_stmt = f"""INSERT INTO mpls_311_staging.track_load
-            (job_start, job_end, job_runtime, year, max_record_cnt, record_cnt, data_last_edit_date, pq_path, parameter)
+            (job_start, job_end, job_runtime, year, max_record_cnt, record_cnt, data_last_edit_date, pq_path)
             VALUES({track['job_start']},
                     {track['job_end']},
                     {track['job_runtime']},
