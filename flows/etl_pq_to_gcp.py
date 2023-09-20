@@ -106,8 +106,7 @@ def track_load_gcs(track: dict, bq_block):
                     {track['max_record_cnt']},
                     {track['record_cnt']},
                     {track['data_last_edit_date']},
-                    '{track['pq_path']}',
-                    '{track['parameter']}')"""
+                    '{track['pq_path']}')"""
 
     print(track_stmt)
 

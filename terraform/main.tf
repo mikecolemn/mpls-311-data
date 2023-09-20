@@ -59,12 +59,6 @@ resource "google_bigquery_table" "track_load" {
   schema = <<EOF
 [
   {
-    "name": "load_id",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "unique ID tracking each load"
-  },
-  {
     "name": "job_start",
     "type": "NUMERIC",
     "mode": "NULLABLE",
@@ -111,12 +105,6 @@ resource "google_bigquery_table" "track_load" {
     "type": "STRING",
     "mode": "NULLABLE",
     "description": "Path of Parquet file loaded"
-  },
-  {
-    "name": "parameter",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "Parameters used in this job run"
   }
 
 ]
