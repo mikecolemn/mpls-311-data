@@ -98,7 +98,7 @@ resource "google_bigquery_table" "track_load" {
     "name": "data_last_edit_date",
     "type": "NUMERIC",
     "mode": "NULLABLE",
-    "description": "Relative path to the parquet file processed"
+    "description": "Data last edit date for this year recordset"
   },
   {
     "name": "pq_path",
