@@ -35,7 +35,7 @@ deployments:
   schedule: {}
   flow_name: null
   entrypoint: flows/etl_mpls311_gcp.py:parent_process_data
-  parameters: {"years":[2023]}
+  parameters: {"years":[2015,2016,2017,2018,2019,2020,2021,2022,2023]}
   work_pool:
     name: default
     work_queue_name: default
