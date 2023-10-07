@@ -24,3 +24,10 @@ variable "BQ_DATASET" {
   type = list
   default = ["mpls_311_staging", "mpls_311_development", "mpls_311_production"]
 }
+
+variable "bq_staging" {
+  description = "The BQ staging dataset, for the table schema creation"
+  type = string
+  default = "mpls_311_staging"
+  
+}

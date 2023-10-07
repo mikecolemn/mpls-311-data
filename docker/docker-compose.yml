@@ -1,0 +1,85 @@
+version: '3.6'
+name: docker-prefect
+x-build:
+  &default-build
+  context: .
+  dockerfile: docker_prefect
+  
+x-app-vars:
+  &default-app-vars
+  PREFECT_ORION_API_HOST: 127.0.0.1
+  PREFECT_ORION_API_PORT: 4200
+  PREFECT_ORION_DATABASE_CONNECTION_URL: postgresql+asyncpg://root:admin@pgdatabase:5432/db
+  PREFECT_ORION_ANALYTICS_ENABLED: "false"
+  PREFECT_LOGGING_SERVER_LEVEL: DEBUG
+  PREFECT_LOCAL_STORAGE_PATH: "/tmp/prefect/storage"
+services:
+  orion:
+    build:
+      <<: *default-build
+      target: base
+    container_name: orion
+    restart: unless-stopped
+    entrypoint: [ "prefect", "server", "start", "--host", "0.0.0.0", '--port', '4200' ]
+    ports:
+      - 4200:4200
+    environment:
+      <<: *default-app-vars
+      PREFECT_API_URL: http://localhost:4200/api # Can also use http://FQDN:4200/api
+    depends_on:
+      - pgdatabase
+    #volumes:
+    #  - "~/.prefect:/root/.prefect"
+    networks:
+      - prefect-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  prefect-agent:
+    build:
+      <<: *default-build
+      target: agent
+    container_name: prefect-agent
+    restart: unless-stopped
+    command:
+      - prefect
+      - worker
+      - start
+      - --pool
+      - default
+      - --work-queue
+      - default
+    depends_on:
+      - orion
+    environment:
+      <<: *default-app-vars
+      PREFECT_API_URL: http://host.docker.internal:4200/api
+    volumes:
+      #- "~/prefect/data/prefect_data:/opt/prefect/data"
+      #- "~/git/mpls-311-data/flows:/opt/prefect/flows"
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - prefect-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  pgdatabase:
+    image: postgres:14.7-alpine
+    container_name: pgdatabase
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=db
+    volumes:
+      - "~/docker/prefect_pg_db:/var/lib/postgresql/data:rm"
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "5433:5432"
+    networks:
+      - prefect-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  prefect-network:
+    driver: bridge
+    name: prefect-network

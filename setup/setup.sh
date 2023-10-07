@@ -3,7 +3,17 @@
 # initial updates
 sudo apt-get update -y
 sudo apt-get upgrade -y
-sudo apt-get install unzip -y
+sudo apt-get install docker.io unzip -y
+
+sudo gpasswd -a $USER docker
+sudo service docker restart
+
+# setup docker-compose
+mkdir ~/bin
+wget https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-linux-x86_64 -O ~/bin/docker-compose
+chmod +x ~/bin/docker-compose
+echo 'export PATH="${HOME}/bin:${PATH}"' >> ~/.bashrc
+sudo chmod 777 /var/run/docker.sock
 
 # setup gcloud cli
 sudo apt-get install apt-transport-https ca-certificates gnupg -y

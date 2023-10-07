@@ -1,6 +1,6 @@
 pandas==1.5.2
 prefect==2.11.3
-prefect-sqlalchemy==0.2.4
+prefect-sqlalchemy==0.2.2
 prefect-gcp==0.4.5
 protobuf==4.21.11
 pyarrow==10.0.1
